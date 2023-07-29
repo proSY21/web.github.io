@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Database Management</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        background-color: #fffefe; /* Light Gray */
+      }
+      .main-title {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 30px;
+        margin-bottom: 30px;
+      }
+
+      .logo {
+        max-height: 140px; /* Adjust the height as needed */
+        margin: 0 10px; /* Add spacing between the logos and the heading */
+      }
+      .main-title h1 {
+        font-size: 28px;
+        font-weight: bold;
+        color: #000; /* Black */
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 10px;
+      }
+      .main-title p {
+        font-size: 20px;
+        color: #555; /* Dark Gray */
+        letter-spacing: 1px;
+      }
+      .btn-primary {
+        background-color: #04bb78; /* Light Jade */
+        border-color: #04bb78;
+        color: #fff; /* White */
+        padding: 12px 24px;
+        font-size: 18px;
+        border-radius: 30px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+      .btn-primary:hover,
+      .btn-primary:focus,
+      .btn-primary:active,
+      .btn-primary.active {
+        background-color: #00a86b; /* Dark Jade */
+        border-color: #00a86b;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        transform: scale(1.05);
+      }
+      .btn-primary span {
+        position: relative;
+        z-index: 1;
+      }
+      .nav-pills {
+        background-color: transparent;
+        border-radius: 30px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+      }
+      .nav-pills > li > a {
+        border-radius: 30px;
+
+        margin: 10px;
+        padding: 10px 20px;
+        color: #555; /* Dark Gray */
+        font-size: 18px;
+        transition: color 0.3s ease;
+        position: relative;
+        z-index: 1;
+        background-color: transparent;
+      }
+      .nav-pills > li > a::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 4px;
+        background-color: #060606; /* Maroon */
+        transition: width 0.3s ease;
+      }
+      .nav-pills > li > a:hover,
+      .nav-pills > li > a:focus {
+        color: #060606; /* Maroon */
+      }
+      .nav-pills > li > a:hover::before,
+      .nav-pills > li > a:focus::before {
+        width: 100%;
+      }
+      .nav-pills > li.active > a {
+        color: #fefefe; /* Maroon */
+        background-color: #fb0203; /* Orange */
+      }
+      .nav-pills > li.active > a::before {
+        width: 100%;
+      }
+      .nav-pills .plus-icon {
+        position: relative;
+        margin-left: 10px;
+      }
+
+      .tab-content {
+        background-color: #fff; /* White */
+        padding: 20px;
+        border-radius: 30px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .faculty-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 50px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+      .faculty-container.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .faculty-container button {
+        margin: 10px;
+        padding: 10px 20px;
+        font-size: 18px;
+        border-radius: 30px;
+        background-color: #04bb78; /* Light Jade */
+        border-color: #04bb78;
+        color: #fefefe; /* White */
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+      .faculty-container button:hover,
+      .faculty-container button:focus,
+      .faculty-container button:active,
+      .faculty-container button.active {
+        background-color: #00a86b; /* Dark Jade */
+        border-color: #00a86b;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        transform: scale(1.05);
+      }
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .nav-pills > li.active > a::before,
+      .nav-pills > li > a.active::before {
+        width: 0;
+      }
+      .nav-pills > li.active > a:hover {
+        background-color: #fb0203; /* Orange */
+      }
+      #Addition {
+        align-items: center;
+      }
+
+      .plus-icon {
+        display: inline-block;
+        color: #000;
+        width: 40px;
+        height: 40px;
+        font-size: 40px;
+        line-height: 1;
+        text-align: center;
+        border: 1px solid #000;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.3s ease; /* Add transition for smooth effect */
+      }
+
+      /* CSS for the plus icon appearance */
+      .plus-icon::before {
+        content: "+"; /* HTML entity for plus sign */
+        font-weight: bold;
+      }
+
+      /* CSS for the fill effect */
+      .plus-icon.clicked {
+        background-color: #fb0203; /* Change to desired fill color when clicked */
+      }
+      .buttons-container {
+        display: flex;
+        align-items: center;
+        align-content: center;
+        margin-right: 400px;
+      }
+      #non {
+        background-color: white;
+        align-items: center;
+      }
+      /* Hide buttons by default */
+      .buttons-container .button {
+        display: none;
+        margin-right: 10px;
+      }
+
+      /* Show buttons when the plus icon is clicked */
+      .plus-icon.clicked + .buttons-container .button {
+        display: inline-block;
+      }
+      #Addition {
+        align-items: center;
+        align-content: center;
+        margin-left: 0px;
+      }
+      .plus-icon {
+        position: relative;
+      }
+
+      .plus-icon:hover::after {
+        content: attr(data-title);
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        transform: translate(-70%, -165%);
+        background-color: #f8f9fa;
+        color: #333;
+        padding: 5px 10px;
+        font-size: 18px;
+        border-radius: 5px;
+        transition: all 0.5s ease;
+        white-space: nowrap; /* Prevent text wrapping */
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2); /* Optional: Add shadow */
+      }
+
+      .plus-icon:hover::before {
+        content: "";
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent transparent transparent #f8f9fa;
+        transition: all 0.5s ease;
+      }
+
+      /* Media queries for smaller screens... */
+
+      @media screen and (max-width: 768px) {
+        .main-title {
+          flex-direction: row;
+          align-items: center;
+          text-align: center;
+          font: 18px;
+        }
+        #full-name{
+          font:10px ;
+        }
+
+        .main-title h1 {
+          margin: 20px 0;
+        }
+
+        .main-title img.logo {
+          height: 80px;
+          width: 80px;
+        }
+
+        .nav-pills {
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+
+        .nav-pills li {
+          margin: 0px;
+          flex-wrap: wrap;
+        }
+        .btn-primary {
+          font-size: 18px;
+          padding: 10px 16px;
+          margin: 5px;
+        }
+        .nav-pills > li > a {
+          font-size: 19px;
+          padding: 8px 16px;
+        }
+
+        .faculty-container button {
+          width: 80%;
+          margin: 20px;
+          flex-wrap: wrap;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="main-title">
+        <img
+          class="logo"
+          src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b0/University_of_Engineering_and_Technology_Lahore_logo.svg/1200px-University_of_Engineering_and_Technology_Lahore_logo.svg.png"
+          alt="Logo 1"
+          width="100px"
+          height="100px"
+        />
+        &nbsp;&nbsp;&nbsp;
+        <h1>Mechatronics & Control Engineering</h1>
+        <img
+          class="logo"
+          src="https://mce.uet.edu.pk/wp-content/uploads/2021/10/cropped-Mechatronics-Logo-PNG-1-1-300x300.png"
+          alt="Logo 2"
+          width="100px"
+          height="100px"
+        />
+        <p id="full-name">University of Engineering and Technology, Lahore</p>
+      </div>
+
+      <ul class="nav nav-pills">
+        <li class="active">
+          <a data-toggle="pill" href="#curriculum">Curriculum</a>
+        </li>
+        <li><a data-toggle="pill" href="#facultyData">Faculty Data</a></li>
+        <li><a data-toggle="pill" href="#obeFolder">OBE Folder</a></li>
+        <li><a data-toggle="pill" href="#alumniData">Alumni Data</a></li>
+        <li>
+          <a data-toggle="pill" href="#Faculty" onclick="showFacultyButtons()"
+            >Faculty Teams</a
+          >
+        </li>
+        <a data-toggle="pill" href="#Addition">
+          <div class="plus-icon" data-title="Add Content"></div>
+        </a>
+      </ul>
+
+      <div class="tab-content">
+        <div id="Addition" class="tab-pane fade">
+          <h2>Add Content</h2>
+          <br />
+          <div class="text-center">
+            <button type="button" class="btn btn-primary">
+              <span>Button1</span>
+            </button>
+            <button type="button" class="btn btn-primary">
+              <span>Button2</span>
+            </button>
+          </div>
+        </div>
+        <div id="curriculum" class="tab-pane fade in active">
+          <h2>Curriculum</h2>
+          <br />
+          <div class="text-center">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="gradCurriculum()"
+            >
+              <span>Graduate Curriculum</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="undergradCurriculum()"
+            >
+              <span>Undergraduate Curriculum</span>
+            </button>
+          </div>
+        </div>
+        <div id="facultyData" class="tab-pane fade">
+          <h2>Faculty Data</h2>
+          <br />
+          <div class="text-center">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="pecRegistrationRecord()"
+            >
+              <span>PEC Registration Record</span>
+            </button>
+          </div>
+          <br />
+        </div>
+        <div id="obeFolder" class="tab-pane fade">
+          <h2>OBE Folder</h2>
+          <br />
+          <div class="text-center">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="obe2020_2021()"
+            >
+              <span>2020-2021</span>
+            </button>
+          </div>
+          <br />
+        </div>
+        <div id="alumniData" class="tab-pane fade">
+          <h2>Alumni Data</h2>
+          <br />
+          <div class="text-center">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="alumniInfoForm()"
+            >
+              <span>Alumni Info Form</span>
+            </button>
+          </div>
+          <br />
+        </div>
+        <div id="Faculty" class="tab-pane fade">
+          <h2>Faculty Teams</h2>
+          <br />
+          <div class="faculty-container">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="FacultyData()"
+            >
+              <span>Faculty Data</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="Chairman()">
+              <span>Chairman</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="SecBoS()">
+              <span>Sec BoS</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="SecPurchaseCommittee()"
+            >
+              <span>Sec Purchase Committee</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="TimetableIncharge()"
+            >
+              <span>Timetable Incharge</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="SecPGSRC()">
+              <span>Sec PGSRC</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="OBEFolder()">
+              <span>OBE Folder</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="IAB()">
+              <span>IAB</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="FYP()">
+              <span>FYP</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="CoordinateAcademics()"
+            >
+              <span>Coordinate Academics</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="EHS()">
+              <span>EHS</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="DQEC()">
+              <span>DQEC</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="CLORevisionCommittee()"
+            >
+              <span>CLO Revision Committee</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="DatabaseManager()"
+            >
+              <span>Database Manager</span>
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="AlumniData()"
+            >
+              <span>Alumni Data</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+      function toggleFillEffect() {
+        var plusIcon = document.querySelector(".plus-icon");
+        plusIcon.classList.toggle("clicked");
+      }
+      function gradCurriculum() {
+        window.open(
+          "https://drive.google.com/drive/folders/1Y1w5HoR3DWRFV65VfiC_rTukzGQcYiQt"
+        );
+      }
+
+      function undergradCurriculum() {
+        window.open(
+          "https://drive.google.com/drive/folders/1eVR586pvP0dDyB5UaqZsNO_EtjMv_H-M"
+        );
+      }
+
+      function pecRegistrationRecord() {
+        window.open(
+          "https://drive.google.com/drive/folders/1gi-ZuJX2sSvLgetz09Ajz8b_kzH7gbWC"
+        );
+      }
+
+      function obe2020_2021() {
+        window.open(
+          "https://drive.google.com/drive/folders/10U_N9XUai6F7dfqM4B4v8kORC8_taNjJ"
+        );
+      }
+
+      function alumniInfoForm() {
+        window.open(
+          "https://drive.google.com/drive/folders/10Z-6RR4exhUhDESSFK8e6qmErr7v_JZo"
+        );
+      }
+
+      function FacultyData() {
+        window.open(
+          "https://drive.google.com/drive/folders/1ALGMp2zfYyt2fwKF1xx7BOMTp7IkD3RW"
+        );
+      }
+      function Chairman() {
+        window.open(
+          "https://drive.google.com/drive/folders/10z7DCx3koS-qifGme5eZqhP3bOjg-vOA"
+        );
+      }
+      function SecBoS() {
+        window.open(
+          "https://drive.google.com/drive/folders/18s7Z-Rv4zxldpe7bqg53RrzMNenrkCzI"
+        );
+      }
+      function SecPurchaseCommittee() {
+        window.open(
+          "https://drive.google.com/drive/folders/1IztcbYB2OMMWW9Z3HxxS4rNUIAMmUJQ8"
+        );
+      }
+      function TimetableIncharge() {
+        window.open(
+          "https://drive.google.com/drive/folders/167MuHeDLuR-a0YYdPxnV4-aOsowbNsDF"
+        );
+      }
+      function SecPGSRC() {
+        window.open(
+          "https://drive.google.com/drive/folders/10jCen3_UPCkf0vRVbeanTxDpcUiIWYbY"
+        );
+      }
+      function OBEFolder() {
+        window.open(
+          "https://drive.google.com/drive/folders/1EveRqJCMMD9lqjkSzpwofun2FpOXK1A_"
+        );
+      }
+      function IAB() {
+        window.open(
+          "https://drive.google.com/drive/folders/18hSk3ziPHEfYPpMf06Cxpoki5BaLkpvP"
+        );
+      }
+      function FYP() {
+        window.open(
+          "https://drive.google.com/drive/folders/106iZ5tcxel1RRggBwQxKhgvUHR1vYZ-e"
+        );
+      }
+      function CoordinateAcademics() {
+        window.open(
+          "https://drive.google.com/drive/folders/11oDDUSIoUNVRPWNKt8Lrrj5f2BDJbWdo"
+        );
+      }
+      function EHS() {
+        window.open(
+          "https://drive.google.com/drive/folders/1NA8_QjtCOU5BZnaV2bBdyAdXgkEX5NdR"
+        );
+      }
+      function DQEC() {
+        window.open(
+          "https://drive.google.com/drive/folders/1jEx9RFuih73diZ77OKD7uhVw4ZvmjRTx"
+        );
+      }
+      function CLORevisionCommittee() {
+        window.open(
+          "https://drive.google.com/drive/folders/1AIr93gZQRHf0V2iKf225JGJ9dgWntSJ7"
+        );
+      }
+      function DatabaseManager() {
+        window.open(
+          "https://drive.google.com/drive/folders/192-H4phYbxUi4U7SVWUAJ7oRavb6OWfs"
+        );
+      }
+      function AlumniData() {
+        window.open(
+          "https://drive.google.com/drive/folders/1Dh_3d_-g68i0YIfNM1kZAEkDISZK9GqA"
+        );
+      }
+      var plusIcon = document.querySelector(".plus-icon");
+      plusIcon.addEventListener("click", function () {
+        // Add orange color fill effect to plus button when clicked
+        this.style.backgroundColor = "#fb0203"; /* Orange */
+        // Clear background color for all active pills when plus button is clicked.
+        navPills.forEach(function (pill) {
+          pill.style.backgroundColor = "transparent";
+        });
+      });
+
+      function showFacultyButtons() {
+        var facultyContainer = document.getElementById("Faculty");
+        facultyContainer.classList.add("in", "active");
+        var facultyButtons = document.querySelector(".faculty-container");
+        facultyButtons.classList.add("show");
+        facultyButtons.addEventListener("animationend", function () {
+          facultyButtons.style.animation = ""; // Reset animation to prevent repeated triggering
+        });
+        facultyButtons.style.animation = "fadeIn 0.5s ease";
+      }
+      // Add event listener to change button color on click
+      var navPills = document.querySelectorAll(".nav-pills > li > a");
+      navPills.forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          navPills.forEach(function (pill) {
+            pill.style.backgroundColor = "transparent";
+          });
+          this.style.backgroundColor = "#fb0203"; /* Orange */
+        });
+      });
+      navPills.forEach(function (pill) {
+        pill.addEventListener("click", function () {
+          // Reset the plus button color when other buttons are clicked
+          plusIcon.style.backgroundColor = "transparent";
+
+          // Make the background color of other selected tabs transparent
+          navPills.forEach(function (otherPill) {
+            otherPill.style.backgroundColor = "transparent";
+          });
+
+          // Change background color of the clicked tab
+          this.style.backgroundColor = "#fb0203"; /* Orange */
+        });
+      });
+    </script>
+  </body>
+</html>
